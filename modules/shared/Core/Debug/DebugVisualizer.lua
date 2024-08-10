@@ -2,8 +2,6 @@
 -- @classmod DebugVisualizer
 -- @author frick
 
-local DEFAULT_COLOR = game:GetService("RunService"):IsClient() and BrickColor.Red() or BrickColor.Blue()
-
 local DebugVisualizer = {}
 
 function DebugVisualizer:DebugPart(cframe, size, transparency, shape)
@@ -12,16 +10,24 @@ function DebugVisualizer:DebugPart(cframe, size, transparency, shape)
     if shape then
         part.Shape = shape
     end
-    part.Transparency = transparency
+
+    if transparency then
+        part.Transparency = transparency
+    end
     part.Material = Enum.Material.Neon
-    part.BrickColor = DEFAULT_COLOR
+    part.BrickColor = BrickColor.Red()
 
     for _, faceName in ipairs(Enum.NormalId:GetEnumItems()) do
         part[("%sSurface"):format(faceName.Name)] = Enum.SurfaceType.SmoothNoOutlines
     end
 
-    part.CFrame = cframe or CFrame.identity
+    if typeof(cframe) == "CFrame" then
+        part.CFrame = cframe
+    elseif typeof(cframe) == "Vector3" then
+        part.Position = cframe
+    end
     part.Size = size or Vector3.one * 0.1
+    part.Parent = workspace:WaitForChild("Effects")
 
     return part
 end
@@ -46,7 +52,6 @@ end
 function DebugVisualizer:LookAtPart(pointA, pointB, transparency, thickness)
     local part = self:DebugPart(nil, Vector3.one * (thickness or 0.1), transparency)
     self:PointABPart(part, pointA, pointB)
-    part.Parent = workspace.Terrain
     return part
 end
 

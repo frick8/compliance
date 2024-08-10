@@ -5,7 +5,6 @@ local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Compl
 local startTime = os.clock()
 
 require("NotificationService"):Init()
-require("ServerTemplateProvider"):Init()
 require("SoftShutdown"):Init()
 
 require("ServerClassBinders"):Init()

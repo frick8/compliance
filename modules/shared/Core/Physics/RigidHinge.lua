@@ -14,6 +14,11 @@ RigidHinge.AXIS_INDEX = {
         PointAt = function(self, point)
             error("Not implemented")
         end;
+        Axis = "X";
+        SetAngle = function(self, angle)
+            self._att0.Orientation = Vector3.xAxis * angle
+            return angle
+        end;
     };
     Pitch = {
         SpringInitial = 0;
@@ -58,8 +63,11 @@ function RigidHinge.new(obj)
 
     self._angle = self._att0.Orientation[self._axisIndex.Axis]
 
-    self._upperAngleLimit = self._obj:GetAttribute("UpperAngleLimit")
-    self._lowerAngleLimit = self._obj:GetAttribute("LowerAngleLimit")
+    local angleLimits = self._obj:GetAttribute("AngleLimit")
+    if angleLimits then
+        self._lowerAngleLimit = angleLimits.Min
+        self._upperAngleLimit = angleLimits.Max
+    end
 
     self._pointAt = self._axisIndex.PointAt
     self._setAngle = self._axisIndex.SetAngle

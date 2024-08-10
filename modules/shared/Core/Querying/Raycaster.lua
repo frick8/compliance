@@ -32,6 +32,12 @@ function Raycaster:Ignore(object)
     self:_updateParams()
 end
 
+Raycaster.Whitelist = Raycaster.Ignore
+
+function Raycaster:CastTo(origin, pointB)
+    return self:Cast(origin, pointB - origin)
+end
+
 function Raycaster:Cast(origin, direction)
 	for _ = 1, self.MaxCasts do
         local castSuccess, hitData = self:_tryCast(origin, direction)
@@ -53,7 +59,11 @@ function Raycaster:_tryCast(origin, direction)
 
     if result then
         if self.Visualize then
-            self:_visualize(origin, result.Position)
+            local part = DebugVisualizer:LookAtPart(origin, result.Position, 0.3, 0.05)
+
+            -- task.delay(0.3, function()
+            --     part:Destroy()
+            -- end)
         end
 
         if self.Filter and self.Filter(result) then
@@ -65,19 +75,23 @@ function Raycaster:_tryCast(origin, direction)
     end
 
     if self.Visualize then
-        self:_visualize(origin, origin + direction)
+        local part = DebugVisualizer:LookAtPart(origin, origin + direction, 0.3, 0.05)
+
+        -- task.delay(0.3, function()
+        --     part:Destroy()
+        -- end)
     end
 
     return true
 end
 
-function Raycaster:_visualize(origin, pointB)
-    local part = DebugVisualizer:LookAtPart(origin, pointB, 0.7, 0.05)
+function Raycaster:GetIgnoreList()
+    return self._ignoreList
+end
 
-    part.Parent = workspace.Terrain
-    task.delay(10, function()
-        part:Destroy()
-    end)
+function Raycaster:SetIgnoreList(ignoreList)
+    self._ignoreList = ignoreList
+    self:_updateParams()
 end
 
 return Raycaster

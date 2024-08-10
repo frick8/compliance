@@ -36,6 +36,19 @@ function AssemblyUtils.rigidAssemble(model)
     return model
 end
 
+function AssemblyUtils.bulkRigidAssemble(models)
+    local mainModel = models[1]
+    local mainPart = mainModel.PrimaryPart or mainModel:FindFirstChildWhichIsA("BasePart")
+
+    for _, model in ipairs(models) do
+        AssemblyUtils.rigidAssemble(model)
+        local part = model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+        WeldUtils.weld(mainPart, part)
+    end
+
+    return mainPart
+end
+
 function AssemblyUtils.setAnchored(model, bool)
     AssemblyUtils._setProperties(model, "Anchored", bool)
 end
@@ -46,6 +59,10 @@ end
 
 function AssemblyUtils.setCanCollide(model, bool)
     AssemblyUtils._setProperties(model, "CanCollide", bool)
+end
+
+function AssemblyUtils.setCanTouch(model, bool)
+    AssemblyUtils._setProperties(model, "CanTouch", bool)
 end
 
 function AssemblyUtils._setProperties(model, property, value)
